@@ -30,20 +30,16 @@ Other OS:
 (https://www.sfml-dev.org/download.php)
 
     
-## Compile & Run
-
-Compile using the following commands:
-
+## How to Run
+- Download/Clone Repository
+- Compile using:
 ```bash
 g++ -c pr.cpp
 g++ pr.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
 ```
-
-To run, execute:
-
+- Run using:
 ```bash
 ./sfml-app
-
 ```
 
 ## Roadmap
