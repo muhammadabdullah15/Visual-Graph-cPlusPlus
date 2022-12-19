@@ -23,7 +23,7 @@ report
 - C++
 - Required Libraries: SFML
 
-SFML installation:/
+SFML installation:
 - Linux / Ubuntu:
 ```bash
   sudo apt-get install libsfml-dev
