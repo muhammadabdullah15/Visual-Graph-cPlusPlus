@@ -16,7 +16,7 @@ int main()
     container.updateBuildingList();
     container.updateJunctionList();
 
-    sf::RenderWindow window(sf::VideoMode(869, 613), "GIKI Navigator");
+    sf::RenderWindow window(sf::VideoMode(869, 613), "GIKI Navigator", sf::Style::Titlebar | sf::Style::Close);
 
     sf::Texture backGround;
     sf::Sprite sBg;
