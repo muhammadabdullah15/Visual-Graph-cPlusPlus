@@ -20,7 +20,7 @@ report
 
 ## Dependencies
 
-C++
+C++\
 Required Libraries: SFML
 Linux / Ubuntu:
 ```bash
