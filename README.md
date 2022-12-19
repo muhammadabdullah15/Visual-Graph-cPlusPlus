@@ -20,13 +20,12 @@ report
 
 ## Dependencies
 
+C++
 Required Libraries: SFML
-
 Linux / Ubuntu:
 ```bash
   sudo apt-get install libsfml-dev
 ```
-
 Other OS:
 (https://www.sfml-dev.org/download.php)
 
