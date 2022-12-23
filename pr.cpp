@@ -13,9 +13,6 @@ int main()
 {
     LocationsContainer container;
 
-    container.updateBuildingList();
-    container.updateJunctionList();
-
     sf::RenderWindow window(sf::VideoMode(869, 613), "GIKI Navigator", sf::Style::Titlebar | sf::Style::Close);
 
     sf::Texture backGround;
@@ -36,13 +33,14 @@ int main()
             if (event.type == sf::Event::MouseButtonReleased)
             {
                 cout << "Click Location: " << sf::Mouse::getPosition(window).x << "," << sf::Mouse::getPosition(window).y << std::endl;
-                // click(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y, Buildings);
+                cout << "BUILDING " << container.getClosestBuilding(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
+                // cout << "JUNCTION " << container.getClosestJunction(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
                 container.writeJunctions(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
             }
 
             if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::U)
             {
-                container.updateJunctionList();
+                // container.updateJunctionList();
                 // updateBuildingList(Buildings);
             }
         }
