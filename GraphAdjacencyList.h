@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <bits/stdc++.h>
 #include "Queue.h"
 
 using namespace std;
@@ -118,48 +119,72 @@ public:
         cout << endl;
     }
 
-    void BFS(int start)
+    void dijkstra(int source)
     {
-        if (start >= vertices)
+        int *shortestDistances, *parents;
+        bool *added;
+        shortestDistances = new int[vertices];
+        parents = new int[vertices];
+        added = new bool[vertices];
+
+        for (int i = 0; i < vertices; i++)
         {
-            cout << "Start vertex out of range!\n";
-            return;
+            shortestDistances[i] = 10000;
+            added[i] = false;
         }
 
-        Queue q;
+        shortestDistances[source] = 0;
+        parents[source] = -1;
 
-        int visited[vertices] = {0}, levels[vertices] = {0};
-        visited[start] = 1;
-        levels[start] = 0;
-
-        q.enqueue(start);
-        cout << start << ", ";
-        while (!q.isEmpty())
+        for (int i = 1; i < vertices; i++)
         {
-            int temp = q.dequeue();
-            for (int i = 0; i < vertices; i++)
+            int nearest = -1;
+            int shortestDist = 10000;
+            for (int j = 0; j < vertices; j++)
             {
-                if (sourceList[temp].search(i) >= 1 && !visited[i])
+                if (!added[j] && shortestDistances[j] < shortestDist)
                 {
-                    cout << i << ", ";
-                    levels[i] = levels[temp] + 1;
-                    visited[i] = 1;
-                    q.enqueue(i);
+                    nearest = j;
+                    shortestDist = shortestDistances[j];
+                }
+            }
+
+            added[nearest] = true;
+
+            for (int j = 0; j < vertices; j++)
+            {
+                int edgeDist = sourceList[nearest].search(j);
+                if (edgeDist > 0 && ((shortestDist + edgeDist) < shortestDistances[j]))
+                {
+                    parents[j] = nearest;
+                    shortestDistances[j] = shortestDist + edgeDist;
                 }
             }
         }
+        solution(source, shortestDistances, parents);
+    }
 
-        cout << endl;
-        for (int level = 0; level < vertices - 1; level++)
+    void printPath(int vertex, int *parents)
+    {
+        if (vertex == -1)
+            return;
+        printPath(parents[vertex], parents);
+        cout << vertex << " ";
+    }
+
+    void solution(int start, int *distances, int *parents)
+    {
+        cout << "Vertex\t Distance\tPath";
+        for (int i = 0; i < vertices; i++)
         {
-            cout << "Level " << level << " nodes: ";
-            for (int i = 0; i < vertices; i++)
-                if (levels[i] == level)
-                    cout << i << ",";
-            cout << endl;
-            // cout << "\nLevel of " << i << ": " << levels[i];
+            if (i != start)
+            {
+                cout << endl
+                     << start << " -> " << i << "\t\t" << distances[i] << "\t\t";
+                printPath(i, parents);
+            }
         }
-
-        return;
+        cout << endl
+             << endl;
     }
 };
