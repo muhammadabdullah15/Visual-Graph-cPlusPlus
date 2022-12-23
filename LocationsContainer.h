@@ -43,11 +43,59 @@ private:
 public:
     LocationsContainer()
     {
+        graph = new UndirectedGraph(84);
         NUM_BUILDINGS = NUM_JUNCTIONS = 0;
         updateBuildingList();
         updateJunctionList();
-        graph = new UndirectedGraph(200);
-        test();
+        // testPrintJunctions();
+        addJunctionsToGraph();
+        // graph->displayGraph();
+        // test();
+    }
+
+    void addJunctionsToGraph()
+    {
+        cout << "START\n";
+        ifstream readfile;
+        readfile.open("coords_junctionsConnections.txt");
+
+        int dataSets, source, destination, temp, distance, cordX, cordY;
+        readfile >> dataSets;
+        Location *tempLocations;
+
+        cout << "dataSets" << dataSets << endl;
+
+        for (int i = 0; i < dataSets; i++)
+        {
+            distance = 0;
+            readfile >> source >> destination >> temp;
+
+            tempLocations = new Location[temp];
+
+            for (int j = 0; j < temp; j++)
+                readfile >> tempLocations[j].cordX >> tempLocations[j].cordY;
+
+            for (int k = 0; k < temp - 1; k++)
+            {
+                // cout << "distance between " << i << " & " << i + 1 << ": " << distanceBetweenPoints(tempLocations[k], tempLocations[k + 1]) << endl;
+                distance += distanceBetweenPoints(tempLocations[k], tempLocations[k + 1]);
+            }
+
+            cout << "DIST: " << distance << endl;
+            if (distance == 0)
+                graph->addConnection(source, destination);
+            else
+                graph->addConnection(source, destination, distance);
+
+            delete[] tempLocations;
+
+            // for (int k = 0; k < temp; k++)
+            // cout << tempLocations[k];
+        }
+
+        readfile.close();
+        graph->displayGraph();
+        return;
     }
 
     void test()
@@ -95,8 +143,10 @@ public:
         readfile >> NUM_JUNCTIONS;
         Junctions = new Location[NUM_JUNCTIONS];
 
+        int temp;
         for (int i = 0; !readfile.eof() && i < NUM_JUNCTIONS; i++)
         {
+            readfile >> temp;
             readfile >> Junctions[i].cordX;
             readfile >> Junctions[i].cordY;
         }
@@ -136,10 +186,25 @@ public:
         return;
     }
 
+    void displayJunctions(sf::RenderWindow &window)
+    {
+        sf::CircleShape marker(2.f);
+        marker.setFillColor(sf::Color::Green);
+
+        for (int i = 0; i < NUM_JUNCTIONS; i++)
+        {
+            marker.setPosition(Junctions[i].cordX - 2, Junctions[i].cordY - 2);
+            window.draw(marker);
+        }
+        return;
+        return;
+    }
+
     void displayAll(sf::RenderWindow &window)
     {
         displayBuildings(window);
-        displayPaths(window);
+        // displayPaths(window);
+        displayJunctions(window);
     }
 
     int getClosestBuilding(int cordX, int cordY)
@@ -200,18 +265,18 @@ public:
     {
 
         ofstream writeFile;
-        writeFile.open("coords_junctions.txt", ios::out);
+        writeFile.open("new.txt", ios::app);
 
-        writeFile << NUM_JUNCTIONS + 1 << endl;
+        // writeFile << NUM_JUNCTIONS + 1 << endl;
 
-        for (int i = 0; i < NUM_JUNCTIONS; i++)
-            writeFile << Junctions[i].cordX << ' ' << Junctions[i].cordY << endl;
+        // for (int i = 0; i < NUM_JUNCTIONS; i++)
+        // writeFile << Junctions[i].cordX << ' ' << Junctions[i].cordY << endl;
 
-        NUM_JUNCTIONS++;
+        // NUM_JUNCTIONS++;
         writeFile << cordX << ' ' << cordY << endl;
 
         writeFile.close();
 
-        updateJunctionList();
+        // updateJunctionList();
     }
 };
