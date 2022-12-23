@@ -4,3 +4,5 @@ pr.o
 sfml-app
 test.cpp
 d.exe
+.vscode
+test
