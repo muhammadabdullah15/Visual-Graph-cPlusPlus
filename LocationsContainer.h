@@ -5,6 +5,8 @@
 #include <math.h>
 #include <string>
 
+#include "GraphAdjacencyList.h"
+
 using namespace std;
 
 // #define NUM_BUILDINGS 50
@@ -33,6 +35,7 @@ class LocationsContainer
 private:
     Location *Buildings;
     Location *Junctions;
+    UndirectedGraph *graph;
 
     int NUM_BUILDINGS;
     int NUM_JUNCTIONS;
@@ -41,6 +44,18 @@ public:
     LocationsContainer()
     {
         NUM_BUILDINGS = NUM_JUNCTIONS = 0;
+        updateBuildingList();
+        updateJunctionList();
+        graph = new UndirectedGraph(200);
+        test();
+    }
+
+    void test()
+    {
+        graph->addConnection(10, 74);
+        for (int i = 0; i < NUM_JUNCTIONS - 1; i++)
+            graph->addConnection(74 + i, 75 + i, distanceBetweenPoints(Junctions[i], Junctions[i + 1]));
+        graph->displayGraph();
     }
 
     void updateBuildingList()
@@ -127,7 +142,7 @@ public:
         displayPaths(window);
     }
 
-    void click(int cordX, int cordY)
+    int getClosestBuilding(int cordX, int cordY)
     {
         Location temp;
         temp.cordX = cordX;
@@ -138,12 +153,29 @@ public:
             // cout << "id:" << i << ": " << Buildings[i].name << "-" << distanceBetweenPoints(Buildings[i], temp) << endl;
             if (distanceBetweenPoints(Buildings[i], temp) >= 0 && distanceBetweenPoints(Buildings[i], temp) <= 10)
             {
-                // addPoint(i, Buildings);
-                return;
+                cout << Buildings[i];
+                return i;
             }
         }
 
-        return;
+        return -1;
+    }
+
+    int getClosestJunction(int cordX, int cordY)
+    {
+        Location temp;
+        temp.cordX = cordX;
+        temp.cordY = cordY;
+        int buildingID = getClosestBuilding(cordX, cordY);
+
+        for (int i = 0; i < NUM_JUNCTIONS; i++)
+        {
+            // cout << "id:" << i << ": " << Buildings[i].name << "-" << distanceBetweenPoints(Buildings[i], temp) << endl;
+            if (distanceBetweenPoints(Junctions[i], temp) >= 0 && distanceBetweenPoints(Junctions[i], temp) <= 20)
+                return i;
+        }
+
+        return -1;
     }
 
     void testPrintBuildings()
