@@ -6,6 +6,7 @@
 #include <string>
 
 #include "GraphAdjacencyList.h"
+#include "Queue.h"
 
 using namespace std;
 
@@ -36,6 +37,9 @@ private:
     Location *Buildings;
     Location *Junctions;
     UndirectedGraph *graph;
+    string displayText;
+
+    Queue<Location> *travelQueue;
 
     int NUM_BUILDINGS;
     int NUM_JUNCTIONS;
@@ -43,20 +47,29 @@ private:
 public:
     LocationsContainer()
     {
-        graph = new UndirectedGraph(74);
+        displayText = "Click on a node to add it to the travel queue!";
         NUM_BUILDINGS = NUM_JUNCTIONS = 0;
         updateBuildingList();
         updateJunctionList();
-        testPrintJunctions();
+        graph = new UndirectedGraph(NUM_BUILDINGS + NUM_JUNCTIONS);
+        travelQueue = new Queue<Location>;
+        // cout << "B=" << NUM_BUILDINGS << "J=" << NUM_JUNCTIONS << endl;
         addJunctionsToGraph();
-        graph->dijkstra(0);
+        // testPrintJunctions();
+        // graph->dijkstra(0);
         // graph->displayGraph();
         // test();
     }
 
+    void test(int cordX, int cordY)
+    {
+        Location temp;
+        temp.cordX = cordX;
+        temp.cordY = cordY;
+    }
+
     void addJunctionsToGraph()
     {
-        cout << "START\n";
         ifstream readfile;
         readfile.open("coords_junctionConnections.txt");
 
@@ -82,7 +95,7 @@ public:
                 distance += distanceBetweenPoints(tempLocations[k], tempLocations[k + 1]);
             }
 
-            cout << "DATASET: " << i + 1 << "\tS: " << source << "\tD: " << destination << "\tDIST: " << distance << endl;
+            // cout << "DATASET: " << i + 1 << "\tS: " << source << "\tD: " << destination << "\tDIST: " << distance << endl;
             if (distance == 0)
                 graph->addConnection(source, destination);
             else
@@ -95,16 +108,8 @@ public:
         }
 
         readfile.close();
-        graph->displayGraph();
+        // graph->displayGraph();
         return;
-    }
-
-    void test()
-    {
-        graph->addConnection(10, 74);
-        for (int i = 0; i < NUM_JUNCTIONS - 1; i++)
-            graph->addConnection(74 + i, 75 + i, distanceBetweenPoints(Junctions[i], Junctions[i + 1]));
-        graph->displayGraph();
     }
 
     void updateBuildingList()
@@ -201,11 +206,28 @@ public:
         return;
     }
 
+    void displayTextInfo(sf::RenderWindow &window)
+    {
+        sf::Text text;
+        sf::Font font;
+        if (!font.loadFromFile("Fonts/Montserrat-Medium.ttf"))
+        {
+            cout << "ERROR LOADING FONT";
+            return;
+        }
+        text.setFont(font);
+        text.setString(displayText);
+        text.setCharacterSize(18);
+        text.setFillColor(sf::Color::White);
+        window.draw(text);
+    }
+
     void displayAll(sf::RenderWindow &window)
     {
         displayBuildings(window);
         // displayPaths(window);
         displayJunctions(window);
+        displayTextInfo(window);
     }
 
     int getClosestBuilding(int cordX, int cordY)
