@@ -139,7 +139,7 @@ public:
         for (int i = 1; i < vertices; i++)
         {
             int nearest = -1;
-            int shortestDist = 10000;
+            int shortestDist = 100000;
             for (int j = 0; j < vertices; j++)
             {
                 if (!added[j] && shortestDistances[j] < shortestDist)
@@ -150,9 +150,10 @@ public:
             }
 
             added[nearest] = true;
-
+            cout << nearest << endl;
             for (int j = 0; j < vertices; j++)
             {
+                cout << nearest << "," << j << endl;
                 int edgeDist = sourceList[nearest].search(j);
                 if (edgeDist > 0 && ((shortestDist + edgeDist) < shortestDistances[j]))
                 {
@@ -166,6 +167,7 @@ public:
 
     void printPath(int vertex, int *parents)
     {
+        // cout << "V Received:\t" << vertex << "\n";
         if (vertex == -1)
             return;
         printPath(parents[vertex], parents);
@@ -174,6 +176,10 @@ public:
 
     void solution(int start, int *distances, int *parents)
     {
+        // cout << "Parents:\n";
+        // for (int i = 0; i < vertices; i++)
+        //     cout << "Parents of " << i << "\t" << parents[i] << endl;
+
         cout << "Vertex\t Distance\tPath";
         for (int i = 0; i < vertices; i++)
         {
@@ -181,6 +187,7 @@ public:
             {
                 cout << endl
                      << start << " -> " << i << "\t\t" << distances[i] << "\t\t";
+                // cout << "V Sent:\t" << i << "\n";
                 printPath(i, parents);
             }
         }

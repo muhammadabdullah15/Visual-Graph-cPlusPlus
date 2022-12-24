@@ -43,12 +43,13 @@ private:
 public:
     LocationsContainer()
     {
-        graph = new UndirectedGraph(84);
+        graph = new UndirectedGraph(74);
         NUM_BUILDINGS = NUM_JUNCTIONS = 0;
         updateBuildingList();
         updateJunctionList();
-        // testPrintJunctions();
+        testPrintJunctions();
         addJunctionsToGraph();
+        graph->dijkstra(0);
         // graph->displayGraph();
         // test();
     }
@@ -57,13 +58,13 @@ public:
     {
         cout << "START\n";
         ifstream readfile;
-        readfile.open("coords_junctionsConnections.txt");
+        readfile.open("coords_junctionConnections.txt");
 
         int dataSets, source, destination, temp, distance, cordX, cordY;
         readfile >> dataSets;
         Location *tempLocations;
 
-        cout << "dataSets" << dataSets << endl;
+        // cout << "dataSets" << dataSets << endl;
 
         for (int i = 0; i < dataSets; i++)
         {
@@ -81,7 +82,7 @@ public:
                 distance += distanceBetweenPoints(tempLocations[k], tempLocations[k + 1]);
             }
 
-            cout << "DIST: " << distance << endl;
+            cout << "DATASET: " << i + 1 << "\tS: " << source << "\tD: " << destination << "\tDIST: " << distance << endl;
             if (distance == 0)
                 graph->addConnection(source, destination);
             else
@@ -231,13 +232,12 @@ public:
         Location temp;
         temp.cordX = cordX;
         temp.cordY = cordY;
-        int buildingID = getClosestBuilding(cordX, cordY);
 
         for (int i = 0; i < NUM_JUNCTIONS; i++)
         {
             // cout << "id:" << i << ": " << Buildings[i].name << "-" << distanceBetweenPoints(Buildings[i], temp) << endl;
             if (distanceBetweenPoints(Junctions[i], temp) >= 0 && distanceBetweenPoints(Junctions[i], temp) <= 20)
-                return i;
+                return i + NUM_BUILDINGS;
         }
 
         return -1;
@@ -273,6 +273,15 @@ public:
         // writeFile << Junctions[i].cordX << ' ' << Junctions[i].cordY << endl;
 
         // NUM_JUNCTIONS++;
+        int temp = getClosestBuilding(cordX, cordY);
+        if (temp != -1)
+            writeFile << temp << "\t";
+        else
+        {
+            temp = getClosestJunction(cordX, cordY);
+            if (temp != -1)
+                writeFile << temp << "\t";
+        }
         writeFile << cordX << ' ' << cordY << endl;
 
         writeFile.close();
