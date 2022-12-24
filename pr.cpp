@@ -36,17 +36,19 @@ int main()
                 window.close();
                 break;
             case sf::Event::MouseButtonReleased:
-                cout << "Click Location: " << sf::Mouse::getPosition(window).x << "," << sf::Mouse::getPosition(window).y << std::endl;
-                cout << "BUILDING " << container.getClosestBuilding(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
-                // cout << "JUNCTION " << container.getClosestJunction(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
+                // cout << "Click Location: " << sf::Mouse::getPosition(window).x << "," << sf::Mouse::getPosition(window).y << std::endl;
+                // cout << "BUILDING " << container.getClosestBuilding(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
                 // container.writeJunctions(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+                container.addToPath(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+                cout << "JUNCTION " << container.getClosestJunction(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
+            case sf::Event::KeyReleased:
+                if (event.key.code == sf::Keyboard::Enter)
+                {
+                    container.evaluateQueue();
+                }
+                else if (event.key.code == sf::Keyboard::R)
+                    container.resetTravelQueue();
             }
-
-            // if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::U)
-            // {
-            // container.updateJunctionList();
-            // updateBuildingList(Buildings);
-            // }
         }
 
         window.draw(sBg);

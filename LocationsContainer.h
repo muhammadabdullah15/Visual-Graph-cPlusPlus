@@ -39,7 +39,8 @@ private:
     UndirectedGraph *graph;
     string displayText;
 
-    Queue<Location> *travelQueue;
+    Queue<int> *travelQueue;
+    Queue<int> *travelPath;
 
     int NUM_BUILDINGS;
     int NUM_JUNCTIONS;
@@ -52,7 +53,8 @@ public:
         updateBuildingList();
         updateJunctionList();
         graph = new UndirectedGraph(NUM_BUILDINGS + NUM_JUNCTIONS);
-        travelQueue = new Queue<Location>;
+        travelQueue = new Queue<int>;
+        travelPath = new Queue<int>;
         // cout << "B=" << NUM_BUILDINGS << "J=" << NUM_JUNCTIONS << endl;
         addJunctionsToGraph();
         // testPrintJunctions();
@@ -61,11 +63,55 @@ public:
         // test();
     }
 
-    void test(int cordX, int cordY)
+    void testD(int s, int d)
     {
-        Location temp;
-        temp.cordX = cordX;
-        temp.cordY = cordY;
+        Queue<int> temp;
+        graph->dijkstra(s, d, &temp);
+        temp.printAll();
+        return;
+    }
+
+    void addToPath(int cordX, int cordY)
+    {
+        if (getClosestBuilding(cordX, cordY) == -1)
+            return;
+
+        int building = getClosestBuilding(cordX, cordY);
+        if (travelQueue->isEmpty())
+            displayText = "Click on another node to add it to the travel queue OR \nPress 'Enter' to get shortest path OR\nPress 'R' to reset to beginning\n\nCurrent travel list:";
+        displayText += ("\n" + Buildings[building].name);
+        travelQueue->enqueue(building);
+        travelQueue->printAll();
+    }
+
+    void evaluateQueue()
+    {
+        if (travelQueue->isEmpty())
+        {
+            displayText = "Add nodes to queue before evaluating!";
+            return;
+        }
+
+        int source = travelQueue->dequeue();
+
+        while (!travelQueue->isEmpty())
+        {
+            int destination = travelQueue->dequeue();
+            graph->dijkstra(source, destination, travelPath);
+            travelPath->dequeue();
+            source = destination;
+        }
+
+        displayText = "The shortest path from (" + Buildings[travelQueue->getFront()].name + ") to (" + Buildings[travelQueue->getRear()].name + ") is highlighted below!\n\nPress 'R' to reset to beginning";
+    }
+
+    void resetTravelQueue()
+    {
+        while (!travelPath->isEmpty())
+            travelPath->dequeue();
+
+        displayText = "Click on a node to add it to the travel queue!";
+        return;
     }
 
     void addJunctionsToGraph()
@@ -176,7 +222,6 @@ public:
 
     void displayPaths(sf::RenderWindow &window)
     {
-
         sf::VertexArray paths;
         paths.clear();
         paths.setPrimitiveType(sf::Lines);
