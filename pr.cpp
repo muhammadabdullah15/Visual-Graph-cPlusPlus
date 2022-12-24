@@ -20,7 +20,7 @@ int main()
 
     sf::Texture backGround;
     sf::Sprite sBg;
-    if (!backGround.loadFromFile("Map.png"))
+    if (!backGround.loadFromFile("Media/Map.png"))
         cout << "File not found\n";
 
     sBg.setTexture(backGround);

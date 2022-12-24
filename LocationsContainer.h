@@ -210,7 +210,7 @@ public:
     {
         sf::Text text;
         sf::Font font;
-        if (!font.loadFromFile("Fonts/Montserrat-Medium.ttf"))
+        if (!font.loadFromFile("Media/Montserrat-Medium.ttf"))
         {
             cout << "ERROR LOADING FONT";
             return;
