@@ -167,7 +167,6 @@ public:
 
     void printPath(int vertex, int *parents)
     {
-        // cout << "V Received:\t" << vertex << "\n";
         if (vertex == -1)
             return;
         printPath(parents[vertex], parents);
@@ -176,10 +175,6 @@ public:
 
     void solution(int start, int *distances, int *parents)
     {
-        // cout << "Parents:\n";
-        // for (int i = 0; i < vertices; i++)
-        //     cout << "Parents of " << i << "\t" << parents[i] << endl;
-
         cout << "Vertex\t Distance\tPath";
         for (int i = 0; i < vertices; i++)
         {
