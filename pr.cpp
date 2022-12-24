@@ -7,7 +7,10 @@
 #include "LocationsContainer.h"
 
 using namespace std;
-// g++ -c pr.cpp;g++ pr.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system;./sfml-app
+/*
+COMPILE INSTRUCTION
+g++ -c pr.cpp;g++ pr.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system;./sfml-app
+*/
 
 int main()
 {
@@ -27,22 +30,23 @@ int main()
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
-
-            if (event.type == sf::Event::MouseButtonReleased)
+            switch (event.type)
             {
+            case sf::Event::Closed:
+                window.close();
+                break;
+            case sf::Event::MouseButtonReleased:
                 cout << "Click Location: " << sf::Mouse::getPosition(window).x << "," << sf::Mouse::getPosition(window).y << std::endl;
                 cout << "BUILDING " << container.getClosestBuilding(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
-                cout << "JUNCTION " << container.getClosestJunction(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
-                container.writeJunctions(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+                // cout << "JUNCTION " << container.getClosestJunction(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y) << endl;
+                // container.writeJunctions(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
             }
 
-            if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::U)
-            {
-                // container.updateJunctionList();
-                // updateBuildingList(Buildings);
-            }
+            // if (event.type == sf::Event::KeyReleased && event.key.code == sf::Keyboard::U)
+            // {
+            // container.updateJunctionList();
+            // updateBuildingList(Buildings);
+            // }
         }
 
         window.draw(sBg);
