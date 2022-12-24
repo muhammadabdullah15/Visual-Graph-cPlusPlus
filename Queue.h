@@ -47,13 +47,17 @@ public:
         if (isEmpty())
         {
             cout << "List empty!" << endl;
-            return -1;
+            return {0};
         }
 
         T headval = head->data;
         head = head->next;
         return headval;
     }
+
+    T getFront() { return head->data; }
+
+    T getRear() { return rear->data; }
 
     bool isEmpty()
     {
@@ -65,6 +69,8 @@ public:
 
     void printAll()
     {
+        if (isEmpty())
+            return;
         node *ptrTemp = head;
         cout << endl;
         while (ptrTemp != NULL)
