@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <bits/stdc++.h>
-
+#include "Queue.h"
 using namespace std;
 
 class Edges
@@ -118,7 +118,7 @@ public:
         cout << endl;
     }
 
-    void dijkstra(int source, int destination)
+    void dijkstra(int source, int destination, Queue<int> *path)
     {
         int *shortestDistances, *parents;
         bool *added;
@@ -161,31 +161,20 @@ public:
                 }
             }
         }
-        solution(source, destination, shortestDistances, parents);
+        solution(source, destination, shortestDistances, parents, path);
     }
 
-    void printPath(int vertex, int *parents)
+    void getPath(int vertex, int *parents, Queue<int> *path)
     {
         if (vertex == -1)
             return;
-        printPath(parents[vertex], parents);
-        cout << vertex << " ";
+        getPath(parents[vertex], parents, path);
+        path->enqueue(vertex);
     }
 
-    void solution(int start, int destination, int *distances, int *parents)
+    void solution(int start, int destination, int *distances, int *parents, Queue<int> *path)
     {
-        cout << "Vertex\t Distance\tPath";
-        // for (int i = 0; i < vertices; i++)
-        // {
         if (destination != start)
-        {
-            cout << endl
-                 << start << " -> " << destination << "\t\t" << distances[destination] << "\t\t";
-            // cout << "V Sent:\t" << i << "\n";
-            printPath(destination, parents);
-        }
-        // }
-        cout << endl
-             << endl;
+            return getPath(destination, parents, path);
     }
 };
