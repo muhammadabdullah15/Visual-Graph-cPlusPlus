@@ -3,12 +3,13 @@
 #include <iostream>
 using namespace std;
 
+template <class T>
 class Queue
 {
 private:
     struct node
     {
-        int data;
+        T data;
         node *next;
     };
 
@@ -22,7 +23,7 @@ public:
         rear = NULL;
     }
 
-    void enqueue(int value)
+    void enqueue(T value)
     {
         node *ptrNew = new node, *ptrTemp = head;
         ptrNew->data = value;
@@ -41,7 +42,7 @@ public:
         return;
     }
 
-    int dequeue()
+    T dequeue()
     {
         if (isEmpty())
         {
@@ -49,7 +50,7 @@ public:
             return -1;
         }
 
-        int headval = head->data;
+        T headval = head->data;
         head = head->next;
         return headval;
     }
@@ -58,18 +59,8 @@ public:
     {
         if (head == NULL)
             return true;
-        else
-            return false;
-    }
 
-    void getfirst()
-    {
-        cout << "First value: " << head->data;
-    }
-
-    void getlast()
-    {
-        cout << "Last value: " << rear->data;
+        return false;
     }
 
     void printAll()
