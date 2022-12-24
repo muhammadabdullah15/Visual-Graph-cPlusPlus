@@ -118,7 +118,7 @@ public:
         cout << endl;
     }
 
-    void dijkstra(int source)
+    void dijkstra(int source, int destination)
     {
         int *shortestDistances, *parents;
         bool *added;
@@ -161,7 +161,7 @@ public:
                 }
             }
         }
-        solution(source, shortestDistances, parents);
+        solution(source, destination, shortestDistances, parents);
     }
 
     void printPath(int vertex, int *parents)
@@ -172,19 +172,19 @@ public:
         cout << vertex << " ";
     }
 
-    void solution(int start, int *distances, int *parents)
+    void solution(int start, int destination, int *distances, int *parents)
     {
         cout << "Vertex\t Distance\tPath";
-        for (int i = 0; i < vertices; i++)
+        // for (int i = 0; i < vertices; i++)
+        // {
+        if (destination != start)
         {
-            if (i != start)
-            {
-                cout << endl
-                     << start << " -> " << i << "\t\t" << distances[i] << "\t\t";
-                // cout << "V Sent:\t" << i << "\n";
-                printPath(i, parents);
-            }
+            cout << endl
+                 << start << " -> " << destination << "\t\t" << distances[destination] << "\t\t";
+            // cout << "V Sent:\t" << i << "\n";
+            printPath(destination, parents);
         }
+        // }
         cout << endl
              << endl;
     }
