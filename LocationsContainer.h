@@ -41,6 +41,8 @@ private:
 
     Queue<int> *travelQueue;
     Queue<int> *travelPath;
+    Queue<Location> *visualPathPoints;
+    bool displayPaths;
 
     int NUM_BUILDINGS;
     int NUM_JUNCTIONS;
@@ -55,6 +57,8 @@ public:
         graph = new UndirectedGraph(NUM_BUILDINGS + NUM_JUNCTIONS);
         travelQueue = new Queue<int>;
         travelPath = new Queue<int>;
+        visualPathPoints = new Queue<Location>;
+        displayPaths = false;
         // cout << "B=" << NUM_BUILDINGS << "J=" << NUM_JUNCTIONS << endl;
         addJunctionsToGraph();
         // testPrintJunctions();
@@ -98,17 +102,74 @@ public:
         {
             int destination = travelQueue->dequeue();
             graph->dijkstra(source, destination, travelPath);
-            travelPath->dequeue();
+            travelPath->deleteRear();
             source = destination;
         }
+
+        makeVisualPath();
+        displayPaths = true;
 
         displayText = "The shortest path from (" + Buildings[travelQueue->getFront()].name + ") to (" + Buildings[travelQueue->getRear()].name + ") is highlighted below!\n\nPress 'R' to reset to beginning";
     }
 
+    void makeVisualPath()
+    {
+        Location *all = new Location[NUM_BUILDINGS + NUM_JUNCTIONS];
+        for (int i = 0; i < NUM_BUILDINGS; i++)
+            all[i] = Buildings[i];
+        for (int i = 0; i < NUM_JUNCTIONS; i++)
+            all[i + NUM_JUNCTIONS] = Junctions[i];
+
+        ifstream readfile;
+
+        int tempSource = travelPath->dequeue();
+
+        // START OF WHILE LOOP
+        visualPathPoints->enqueue(all[tempSource]);
+        int tempDest = travelPath->getFront();
+
+        readfile.open("coords_junctionConnections.txt");
+
+        int dataSets, source, destination, temp, distance, cordX, cordY;
+        readfile >> dataSets;
+        Location tempL;
+
+        // cout << "dataSets" << dataSets << endl;
+
+        for (int i = 0; i < dataSets; i++)
+        {
+            distance = 0;
+            readfile >> source >> destination >> temp;
+            if (source == tempSource && destination == tempDest)
+            {
+                for (int j = 0; j < temp; j++)
+                {
+                    readfile >> tempL.cordX >> tempL.cordY;
+                    visualPathPoints->enqueue(tempL);
+                }
+                travelPath->dequeue();
+            }
+            else if (source == tempDest && destination == tempSource)
+            {
+                for (int j = 0; j < temp; j++)
+                {
+                }
+            }
+            else
+                for (int j = 0; j < temp; j++)
+                    readfile >> tempL.cordX >> tempL.cordY;
+        }
+
+        readfile.close();
+        delete[] all;
+        return;
+    }
+
     void resetTravelQueue()
     {
-        while (!travelPath->isEmpty())
-            travelPath->dequeue();
+        displayPaths = false;
+        while (!travelQueue->isEmpty())
+            travelQueue->dequeue();
 
         displayText = "Click on a node to add it to the travel queue!";
         return;
@@ -220,7 +281,7 @@ public:
         return;
     }
 
-    void displayPaths(sf::RenderWindow &window)
+    void displayPath(sf::RenderWindow &window)
     {
         sf::VertexArray paths;
         paths.clear();
@@ -270,9 +331,10 @@ public:
     void displayAll(sf::RenderWindow &window)
     {
         displayBuildings(window);
-        // displayPaths(window);
         displayJunctions(window);
         displayTextInfo(window);
+        if (displayPaths)
+            displayPath(window);
     }
 
     int getClosestBuilding(int cordX, int cordY)
@@ -326,33 +388,5 @@ public:
 
         for (int i = 0; i < NUM_JUNCTIONS; i++)
             cout << Junctions[i] << endl;
-    }
-
-    void writeJunctions(int cordX, int cordY)
-    {
-
-        ofstream writeFile;
-        writeFile.open("new.txt", ios::app);
-
-        // writeFile << NUM_JUNCTIONS + 1 << endl;
-
-        // for (int i = 0; i < NUM_JUNCTIONS; i++)
-        // writeFile << Junctions[i].cordX << ' ' << Junctions[i].cordY << endl;
-
-        // NUM_JUNCTIONS++;
-        int temp = getClosestBuilding(cordX, cordY);
-        if (temp != -1)
-            writeFile << temp << "\t";
-        else
-        {
-            temp = getClosestJunction(cordX, cordY);
-            if (temp != -1)
-                writeFile << temp << "\t";
-        }
-        writeFile << cordX << ' ' << cordY << endl;
-
-        writeFile.close();
-
-        // updateJunctionList();
     }
 };
