@@ -55,6 +55,18 @@ public:
         return headval;
     }
 
+    void deleteRear()
+    {
+        if (isEmpty())
+            return;
+        node *ptrTemp = head;
+        while (ptrTemp->next != rear)
+            ptrTemp = ptrTemp->next;
+        rear = ptrTemp;
+        ptrTemp->next = NULL;
+        return;
+    }
+
     T getFront() { return head->data; }
 
     T getRear() { return rear->data; }
