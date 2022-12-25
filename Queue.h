@@ -55,6 +55,10 @@ public:
         return headval;
     }
 
+    T getFront() { return head->data; }
+
+    T getRear() { return rear->data; }
+
     void deleteRear()
     {
         if (isEmpty())
@@ -67,9 +71,17 @@ public:
         return;
     }
 
-    T getFront() { return head->data; }
-
-    T getRear() { return rear->data; }
+    int getSize()
+    {
+        node *temp = head;
+        int count = 0;
+        while (temp)
+        {
+            count++;
+            temp = temp->next;
+        }
+        return count;
+    }
 
     bool isEmpty()
     {
