@@ -149,10 +149,8 @@ public:
             }
 
             added[nearest] = true;
-            cout << nearest << endl;
             for (int j = 0; j < vertices; j++)
             {
-                cout << nearest << "," << j << endl;
                 int edgeDist = sourceList[nearest].search(j);
                 if (edgeDist > 0 && ((shortestDist + edgeDist) < shortestDistances[j]))
                 {
