@@ -7,6 +7,7 @@
 
 #include "GraphAdjacencyList.h"
 #include "Queue.h"
+#include "Stack.h"
 
 using namespace std;
 
@@ -36,6 +37,7 @@ class LocationsContainer
 private:
     Location *Buildings;
     Location *Junctions;
+    Location *Paths;
     UndirectedGraph *graph;
     string displayText;
 
@@ -46,21 +48,23 @@ private:
 
     int NUM_BUILDINGS;
     int NUM_JUNCTIONS;
+    int NUM_PATHS;
 
 public:
     LocationsContainer()
     {
-        displayText = "Click on a node to add it to the travel queue!";
         NUM_BUILDINGS = NUM_JUNCTIONS = 0;
         updateBuildingList();
         updateJunctionList();
         graph = new UndirectedGraph(NUM_BUILDINGS + NUM_JUNCTIONS);
         travelQueue = new Queue<int>;
         travelPath = new Queue<int>;
+        resetTravelQueue();
         visualPathPoints = new Queue<Location>;
         displayPaths = false;
         // cout << "B=" << NUM_BUILDINGS << "J=" << NUM_JUNCTIONS << endl;
         addJunctionsToGraph();
+        // testPath();
         // testPrintJunctions();
         // graph->dijkstra(0);
         // graph->displayGraph();
@@ -73,6 +77,29 @@ public:
         graph->dijkstra(s, d, &temp);
         temp.printAll();
         return;
+    }
+
+    void testEvaluate()
+    {
+        travelQueue->enqueue(0);
+        travelQueue->enqueue(15);
+        travelQueue->enqueue(30);
+        cout << "Travel Queue: ";
+        travelQueue->printAll();
+        evaluateQueue();
+
+        cout << "Visual Path: ";
+        visualPathPoints->printAll();
+    }
+
+    void testPath()
+    {
+        NUM_PATHS = visualPathPoints->getSize();
+        Paths = new Location[NUM_PATHS];
+        for (int i = 0; !visualPathPoints->isEmpty(); i++)
+            Paths[i] = visualPathPoints->dequeue();
+
+        displayPaths = true;
     }
 
     void addToPath(int cordX, int cordY)
@@ -102,14 +129,22 @@ public:
         {
             int destination = travelQueue->dequeue();
             graph->dijkstra(source, destination, travelPath);
-            travelPath->deleteRear();
+            if (!travelQueue->isEmpty())
+                travelPath->deleteRear();
             source = destination;
         }
 
-        makeVisualPath();
-        displayPaths = true;
+        displayText = "The shortest path from (" + Buildings[travelPath->getFront()].name + ") to (" + Buildings[travelPath->getRear()].name + ") is highlighted below!\n\nPress 'R' to reset to beginning";
 
-        displayText = "The shortest path from (" + Buildings[travelQueue->getFront()].name + ") to (" + Buildings[travelQueue->getRear()].name + ") is highlighted below!\n\nPress 'R' to reset to beginning";
+        cout << "Travel Path: ";
+        travelPath->printAll();
+        cout << endl
+             << endl;
+
+        makeVisualPath();
+        testPath();
+        displayPaths = true;
+        return;
     }
 
     void makeVisualPath()
@@ -123,44 +158,63 @@ public:
         ifstream readfile;
 
         int tempSource = travelPath->dequeue();
+        int tempDest;
 
         // START OF WHILE LOOP
-        visualPathPoints->enqueue(all[tempSource]);
-        int tempDest = travelPath->getFront();
-
-        readfile.open("coords_junctionConnections.txt");
-
-        int dataSets, source, destination, temp, distance, cordX, cordY;
-        readfile >> dataSets;
-        Location tempL;
-
-        // cout << "dataSets" << dataSets << endl;
-
-        for (int i = 0; i < dataSets; i++)
+        while (!travelPath->isEmpty())
         {
-            distance = 0;
-            readfile >> source >> destination >> temp;
-            if (source == tempSource && destination == tempDest)
-            {
-                for (int j = 0; j < temp; j++)
-                {
-                    readfile >> tempL.cordX >> tempL.cordY;
-                    visualPathPoints->enqueue(tempL);
-                }
-                travelPath->dequeue();
-            }
-            else if (source == tempDest && destination == tempSource)
-            {
-                for (int j = 0; j < temp; j++)
-                {
-                }
-            }
-            else
-                for (int j = 0; j < temp; j++)
-                    readfile >> tempL.cordX >> tempL.cordY;
-        }
+            // visualPathPoints->enqueue(all[tempSource]);
+            tempDest = travelPath->dequeue();
+            cout << tempSource << "->" << tempDest << endl;
 
-        readfile.close();
+            readfile.open("coords_junctionConnections.txt");
+
+            int dataSets, source, destination, temp, distance, cordX, cordY;
+            readfile >> dataSets;
+            Location tempL;
+
+            // cout << "dataSets" << dataSets << endl;
+
+            for (int i = 0; i <= dataSets; i++)
+            {
+                distance = 0;
+                readfile >> source >> destination >> temp;
+                if (source == tempSource && destination == tempDest)
+                {
+                    visualPathPoints->enqueue(all[tempSource]);
+                    for (int j = 0; j < temp; j++)
+                    {
+                        readfile >> tempL.cordX >> tempL.cordY;
+                        visualPathPoints->enqueue(tempL);
+                    }
+                    visualPathPoints->deleteRear();
+                    // travelPath->dequeue();
+                    break;
+                }
+                else if (source == tempDest && destination == tempSource)
+                {
+                    Stack<Location> *tempStack = new Stack<Location>;
+                    for (int j = 0; j < temp; j++)
+                    {
+                        readfile >> tempL.cordX >> tempL.cordY;
+                        tempStack->push(tempL);
+                    }
+
+                    visualPathPoints->enqueue(all[tempSource]);
+                    while (!tempStack->isEmpty())
+                        visualPathPoints->enqueue(tempStack->pop());
+
+                    delete[] tempStack;
+                    break;
+                }
+                else
+                    for (int j = 0; j < temp; j++)
+                        readfile >> tempL.cordX >> tempL.cordY;
+            }
+
+            readfile.close();
+            tempSource = tempDest;
+        }
         delete[] all;
         return;
     }
@@ -186,7 +240,7 @@ public:
 
         // cout << "dataSets" << dataSets << endl;
 
-        for (int i = 0; i < dataSets; i++)
+        for (int i = 0; i <= dataSets; i++)
         {
             distance = 0;
             readfile >> source >> destination >> temp;
@@ -202,7 +256,7 @@ public:
                 distance += distanceBetweenPoints(tempLocations[k], tempLocations[k + 1]);
             }
 
-            // cout << "DATASET: " << i + 1 << "\tS: " << source << "\tD: " << destination << "\tDIST: " << distance << endl;
+            cout << "DATASET: " << i + 1 << "\tS: " << source << "\tD: " << destination << "\tDIST: " << distance << endl;
             if (distance == 0)
                 graph->addConnection(source, destination);
             else
@@ -283,16 +337,17 @@ public:
 
     void displayPath(sf::RenderWindow &window)
     {
+        // cout << "A";
         sf::VertexArray paths;
         paths.clear();
         paths.setPrimitiveType(sf::Lines);
         paths.resize(1);
-        paths[0] = {sf::Vector2f(Junctions[0].cordX, Junctions[0].cordY), sf::Color::White};
+        paths[0] = {sf::Vector2f(Paths[0].cordX, Paths[0].cordY), sf::Color::White};
 
-        for (int i = 1; i < NUM_JUNCTIONS; i++)
+        for (int i = 1; i < NUM_PATHS; i++)
         {
-            paths.append(sf::Vector2f(Junctions[i].cordX, Junctions[i].cordY));
-            paths.append(sf::Vector2f(Junctions[i].cordX, Junctions[i].cordY));
+            paths.append(sf::Vector2f(Paths[i].cordX, Paths[i].cordY));
+            paths.append(sf::Vector2f(Paths[i].cordX, Paths[i].cordY));
         }
         window.draw(paths);
         return;
