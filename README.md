@@ -13,7 +13,7 @@ Instructor: Usama Arshad
 - Mohammad Omar Khan&emsp; (2021305) ([@Mohammad-Omar-Khan](https://github.com/Mohammad-Omar-Khan))
 
 
-## Report
+## Summary
 
 report
 
