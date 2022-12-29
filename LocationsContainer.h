@@ -71,28 +71,7 @@ public:
         // test();
     }
 
-    void testD(int s, int d)
-    {
-        Queue<int> temp;
-        graph->dijkstra(s, d, &temp);
-        temp.printAll();
-        return;
-    }
-
-    void testEvaluate()
-    {
-        travelQueue->enqueue(0);
-        travelQueue->enqueue(15);
-        travelQueue->enqueue(30);
-        cout << "Travel Queue: ";
-        travelQueue->printAll();
-        evaluateQueue();
-
-        cout << "Visual Path: ";
-        visualPathPoints->printAll();
-    }
-
-    void testPath()
+    void convertToArray()
     {
         NUM_PATHS = visualPathPoints->getSize();
         Paths = new Location[NUM_PATHS];
@@ -142,7 +121,8 @@ public:
              << endl;
 
         makeVisualPath();
-        testPath();
+        visualPathPoints->enqueue(Buildings[travelPath->getRear()]);
+        convertToArray();
         displayPaths = true;
         return;
     }
@@ -182,7 +162,7 @@ public:
                 if (source == tempSource && destination == tempDest)
                 {
                     visualPathPoints->enqueue(all[tempSource]);
-                    for (int j = 0; j < temp; j++)
+                    for (int j = 0; j <= temp; j++)
                     {
                         readfile >> tempL.cordX >> tempL.cordY;
                         visualPathPoints->enqueue(tempL);
@@ -203,7 +183,7 @@ public:
                     visualPathPoints->enqueue(all[tempSource]);
                     while (!tempStack->isEmpty())
                         visualPathPoints->enqueue(tempStack->pop());
-
+                    // visualPathPoints->enqueue(all[destination]);
                     delete[] tempStack;
                     break;
                 }
@@ -249,6 +229,11 @@ public:
 
             for (int j = 0; j < temp; j++)
                 readfile >> tempLocations[j].cordX >> tempLocations[j].cordY;
+
+            if (source >= NUM_BUILDINGS)
+                distance += distanceBetweenPoints(tempLocations[0], Junctions[source - NUM_BUILDINGS]);
+            else
+                distance += distanceBetweenPoints(tempLocations[0], Buildings[source]);
 
             for (int k = 0; k < temp - 1; k++)
             {
