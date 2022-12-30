@@ -17,6 +17,11 @@ Instructor: Usama Arshad
 
 report
 
+## Screenshots
+
+![Demo1](/Media/Demo1.png)
+![Demo2](/Media/Demo2.png)
+![Demo3](/Media/Demo.png)
 
 ## Dependencies
 
