@@ -20,7 +20,9 @@ report
 ## Screenshots
 
 ![Demo1](/Media/Demo1.png)
+
 ![Demo2](/Media/Demo2.png)
+
 ![Demo3](/Media/Demo3.png)
 
 ## Dependencies
