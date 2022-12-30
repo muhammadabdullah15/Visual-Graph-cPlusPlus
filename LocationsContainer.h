@@ -206,6 +206,10 @@ public:
         if (getClosestBuilding(cordX, cordY) == -1)
             return;
 
+        // If already showing paths, return
+        if (displayPaths)
+            return;
+
         // Get the id of closest building
         int building = getClosestBuilding(cordX, cordY);
 
@@ -225,7 +229,7 @@ public:
     void evaluateQueue()
     {
         // If the queue was empty when user pressed evaluate button, display error message
-        if (travelQueue->isEmpty())
+        if (travelQueue->isEmpty() || travelQueue->getSize() == 1)
         {
             displayText = "Add nodes to queue before evaluating!\nPress 'R' to reset";
             return;
