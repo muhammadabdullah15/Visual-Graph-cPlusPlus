@@ -36,8 +36,8 @@ SFML installation:
 - Download/Clone Repository
 - Compile using:
 ```bash
-g++ -c pr.cpp
-g++ pr.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
+g++ -c FinalProject.cpp
+g++ FinalProject.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system
 ```
 - Run using:
 ```bash
