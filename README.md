@@ -1,6 +1,6 @@
 # Visual-Graph-cPlusPlus
 
-Course:     CS112 Lab\
+Course:     CS221 Lab\
 Semester:   3\
 University: GIKI\
 Instructor: Usama Arshad
